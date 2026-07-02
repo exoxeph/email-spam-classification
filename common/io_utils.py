@@ -8,9 +8,20 @@ import pandas as pd
 
 
 def load_dataset(csv_path: Path) -> pd.DataFrame:
+    # Source CSV (bayes2003/emails-for-spam-or-ham-classification-enron-2006,
+    # file email_text.csv) has only "text" and "label" (int 0/1) columns - no
+    # separate subject field. "subject" is kept as an always-empty column so
+    # the (subject, body, label) interface stays consistent for later
+    # versions, even though this particular source has nothing to put in it.
     df = pd.read_csv(csv_path)
-    df = df.rename(columns={"Subject": "subject", "Message": "body", "Spam/Ham": "label"})
-    return df[["subject", "body", "label"]]
+    label_map = {1: "spam", 0: "ham"}
+    return pd.DataFrame(
+        {
+            "subject": "",
+            "body": df["text"],
+            "label": df["label"].map(label_map),
+        }
+    )
 
 
 def save_artifact(obj: Any, path: Path) -> None:

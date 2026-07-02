@@ -10,7 +10,15 @@
 
 ## Global Constraints
 
-- Dataset: Kaggle slug `marcelwiechmann/enron-spam-data`. Raw CSV columns: `Subject`, `Message`, `Spam/Ham`, `Date`. Label values are the strings `"spam"` / `"ham"` (case-insensitive-safe).
+- Dataset: Kaggle slug `bayes2003/emails-for-spam-or-ham-classification-enron-2006`,
+  file `email_text.csv` (the download folder also contains an unrelated
+  `email_origin.csv` - must not be picked up). Raw CSV columns: `text`,
+  `label` (int: 1 = spam, 0 = ham, confirmed via keyword analysis - label 1
+  rows contain "viagra" 738x/28063, label 0 rows contain 0). No separate
+  subject field in this source; `common/io_utils.load_dataset()` returns an
+  always-empty `subject` column to keep the (subject, body, label)
+  interface consistent for v2+. See "Dataset switch" amendment below for
+  why the originally-planned `marcelwiechmann/enron-spam-data` was rejected.
 - `RANDOM_SEED = 42`, `TEST_SIZE = 0.2` — already defined in `common/config.py`, must be imported, never hardcoded again.
 - TF-IDF vectorizer must be fit ONLY on training data (never on the full dataset or test data) — this is the leakage fix from the v1 spec.
 - Split must use `stratify=y` and `random_state=RANDOM_SEED`.
@@ -787,3 +795,51 @@ Expected: all tests across `test_preprocess_v1.py`, `test_io_utils_v1.py`, `test
 git add v1_basic_pipeline/reports/metrics.json v1_basic_pipeline/reports/model_comparison.csv
 git commit -m "docs: add v1 baseline metrics from first real training run"
 ```
+
+---
+
+## Amendment (2026-07-03, during Task 3 execution)
+
+Two real issues were found only by running against real data - both are
+fixed now, documented here since Tasks 1-3's committed code differs from
+what this plan originally specified in those sections above.
+
+### 1. Dataset switch
+
+The originally planned dataset, `marcelwiechmann/enron-spam-data`, turned
+out to be corrupted: its "spam" class has only 6 unique email bodies total,
+each duplicated thousands of times (4500x, 4500x, 3675x, 1500x, 1500x,
+~1096x), and the content of those 6 emails reads as legitimate Enron
+business correspondence, not spam ("start date : 2 / 6 / 02 ; hourahead
+hour...", "fyi , kim . ... original message ... from : fraz..."). This
+looks like a labeling/construction defect specific to that particular
+Kaggle upload.
+
+Switched to `bayes2003/emails-for-spam-or-ham-classification-enron-2006`
+(file `email_text.csv`), verified clean: 28,063 rows, 100% unique text
+(zero duplication), balanced classes (14,287 ham / 13,776 spam), and
+label direction confirmed via keyword analysis (label 1 rows contain
+"viagra" 738 times; label 0 rows contain it zero times). This dataset has
+no separate subject/body split, only combined `text` - `common/io_utils.py`
+returns an always-empty `subject` column so the interface v2+ depends on
+stays consistent; `download_data.py` targets the specific `email_text.csv`
+filename (the download folder also contains `email_origin.csv`, which
+`glob("*.csv")[0]` would have picked first alphabetically - wrong file).
+
+### 2. `build_dataset` dedup bug
+
+Independently of the dataset switch, `common/preprocess.py`'s
+`build_dataset` had a real bug: `combined.drop_duplicates()` deduped on
+text alone, ignoring label. Discovered against the (corrupted) first
+dataset, where it silently collapsed the entire spam class to zero rows -
+every unique spam text happened to match an earlier ham text's first
+occurrence, and only the ham row survived dedup. Fixed to dedupe on the
+`(text, label)` pair instead (build a two-column frame and
+`drop_duplicates()` on both columns together), so identical text under two
+different labels is no longer collapsed to one. Added a regression test,
+`test_build_dataset_keeps_same_text_under_different_labels`, to
+`tests/test_preprocess_v1.py`. This fix is independently correct and
+needed regardless of which dataset is used - `stratify=y` in Task 4's
+`split_dataset` requires at least 2 classes present, so this bug would
+have crashed Task 8's end-to-end run even with a healthy dataset if any
+cross-label text collision existed at all.

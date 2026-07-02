@@ -50,3 +50,19 @@ def test_build_dataset_drops_duplicates():
     )
     X, y = build_dataset(df)
     assert len(X) == 1
+
+
+def test_build_dataset_keeps_same_text_under_different_labels():
+    # Regression test: identical text appearing under BOTH labels must not
+    # collapse to a single row - deduping must key on (text, label), not
+    # text alone, or an entire class can silently disappear.
+    df = pd.DataFrame(
+        {
+            "subject": ["Re: forwarded", "Re: forwarded"],
+            "body": ["please review the attached", "please review the attached"],
+            "label": ["ham", "spam"],
+        }
+    )
+    X, y = build_dataset(df)
+    assert len(X) == 2
+    assert set(y.tolist()) == {0, 1}

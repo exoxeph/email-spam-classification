@@ -29,7 +29,10 @@ def build_dataset(df: pd.DataFrame) -> tuple[pd.Series, pd.Series]:
     combined = (df["subject"] + " " + df["body"]).apply(clean_text)
     labels = df["label"].apply(map_label)
 
-    combined = combined.drop_duplicates()
-    labels = labels.loc[combined.index]
+    # Dedupe on the (text, label) pair, not text alone: spam corpora often
+    # contain many near-identical template emails, and deduping on text
+    # alone would silently collapse an entire class to near-zero if that
+    # same text also happens to appear once under the other label.
+    deduped = pd.DataFrame({"text": combined, "label": labels}).drop_duplicates()
 
-    return combined.reset_index(drop=True), labels.reset_index(drop=True)
+    return deduped["text"].reset_index(drop=True), deduped["label"].reset_index(drop=True)

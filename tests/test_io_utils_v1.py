@@ -3,20 +3,17 @@ import pandas as pd
 from common.io_utils import load_artifact, load_dataset, save_artifact
 
 
-def test_load_dataset_renames_columns(tmp_path):
+def test_load_dataset_maps_text_and_label_columns(tmp_path):
     csv_path = tmp_path / "sample.csv"
-    csv_path.write_text(
-        "Subject,Message,Spam/Ham,Date\n"
-        "Win now,Click here,spam,2006-01-01\n"
-        "Meeting,See you at 2pm,ham,2006-01-02\n"
-    )
+    csv_path.write_text("text,label\n" "Click here to win now,1\n" "See you at 2pm,0\n")
 
     df = load_dataset(csv_path)
 
     assert list(df.columns) == ["subject", "body", "label"]
-    assert df.iloc[0]["subject"] == "Win now"
-    assert df.iloc[0]["body"] == "Click here"
+    assert (df["subject"] == "").all()
+    assert df.iloc[0]["body"] == "Click here to win now"
     assert df.iloc[0]["label"] == "spam"
+    assert df.iloc[1]["label"] == "ham"
 
 
 def test_save_and_load_artifact_roundtrip(tmp_path):
