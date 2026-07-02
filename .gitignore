@@ -19,6 +19,7 @@ data/feedback/*
 
 # Kaggle credentials
 kaggle.json
+.env
 
 # OS
 .DS_Store

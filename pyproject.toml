@@ -12,6 +12,7 @@ dependencies = [
     "kagglehub (>=0.3,<0.4)",
     "matplotlib (>=3.9,<4.0)",
     "streamlit (>=1.38,<2.0)",
+    "python-dotenv (>=1.0,<2.0)",
 ]
 
 [tool.poetry]
