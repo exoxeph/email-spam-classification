@@ -28,25 +28,28 @@
 **Interfaces:**
 - Produces: a working Poetry environment (`poetry install` succeeds) that Tasks 2-9 assume is available via `poetry run`.
 
-- [ ] **Step 1: Write `pyproject.toml`**
+- [ ] **Step 1: Write `pyproject.toml`** (PEP 621 `[project]` format — Poetry
+  2.x deprecates metadata under legacy `[tool.poetry.name/version/...]`)
 
 ```toml
-[tool.poetry]
+[project]
 name = "email-spam-classification"
 version = "0.1.0"
 description = "Progressive versions of an email spam risk triage system (v1-v4)"
-authors = ["mannafee <mannafee@gmail.com>"]
-package-mode = false
+authors = [{name = "exoxeph", email = "imtiazmashrafee@gmail.com"}]
+requires-python = ">=3.11,<4.0"
+dependencies = [
+    "scikit-learn (>=1.5,<2.0)",
+    "pandas (>=2.2,<3.0)",
+    "numpy (>=1.26,<2.0)",
+    "joblib (>=1.4,<2.0)",
+    "kagglehub (>=0.3,<0.4)",
+    "matplotlib (>=3.9,<4.0)",
+    "streamlit (>=1.38,<2.0)",
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-scikit-learn = "^1.5"
-pandas = "^2.2"
-numpy = "^1.26"
-joblib = "^1.4"
-kagglehub = "^0.3"
-matplotlib = "^3.9"
-streamlit = "^1.38"
+[tool.poetry]
+package-mode = false
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3"
@@ -71,7 +74,7 @@ __pycache__/
 # Poetry
 dist/
 
-# Data & artifacts (per specs — raw/processed data and trained models are not committed)
+# Data & artifacts (per specs - raw/processed data and trained models are not committed)
 data/raw/*
 !data/raw/.gitkeep
 data/processed/*
@@ -93,12 +96,17 @@ Thumbs.db
 - [ ] **Step 3: Verify Poetry can resolve and install**
 
 Run: `poetry install --no-root`
-Expected: Poetry creates a `.venv`, resolves all dependencies, writes `poetry.lock`, exits 0. (`--no-root` because `package-mode = false` means there is no project package to install.)
+Expected: resolves all dependencies, writes `poetry.lock`, exits 0. (`--no-root`
+because `package-mode = false` means there is no project package to install.
+On machines where Poetry is configured with `virtualenvs.create = false`,
+this installs into Poetry's shared environment rather than an in-project
+`.venv/` — either is fine, `poetry run` is what matters.)
 
 - [ ] **Step 4: Verify**
 
 Run: `poetry check`
-Expected: `All set!`
+Expected: exits 0. With the `[project]`-table format above, this should
+print `All set!` with no deprecation warnings.
 
 ---
 
@@ -152,7 +160,7 @@ FEEDBACK_DATA_DIR = DATA_DIR / "feedback"
 
 `common/preprocess.py`:
 ```python
-"""clean_text() and map_label() — basic text cleaning and label mapping shared by all versions."""
+"""clean_text() and map_label() - basic text cleaning and label mapping shared by all versions."""
 ```
 
 `common/features.py`:
@@ -186,9 +194,9 @@ Expected: prints `42 0.2`, exits 0.
 ```markdown
 # Data
 
-- `raw/` — downloaded via `common/download_data.py` (Kaggle Enron-based spam dataset). Gitignored.
-- `processed/` — intermediate cleaned data, if any version writes it. Gitignored.
-- `feedback/` — user feedback collected by the v4 Streamlit app (`feedback.csv`). Gitignored.
+- `raw/` - downloaded via `common/download_data.py` (Kaggle Enron-based spam dataset). Gitignored.
+- `processed/` - intermediate cleaned data, if any version writes it. Gitignored.
+- `feedback/` - user feedback collected by the v4 Streamlit app (`feedback.csv`). Gitignored.
 
 None of these are committed to the repo. Run the download script to populate `raw/` before training any version.
 ```
@@ -398,7 +406,7 @@ Run (once implemented): `poetry run python -m v3_model_comparison_tuning.main`
 
 ## Chosen risk thresholds
 
-_(Filled in by hand after reading `reports/threshold_analysis.csv` — this is a manual judgment call, not an automated rule. See `reports/error_analysis.md` for reasoning.)_
+_(Filled in by hand after reading `reports/threshold_analysis.csv` - this is a manual judgment call, not an automated rule. See `reports/error_analysis.md` for reasoning.)_
 ```
 
 - [ ] **Step 4: Verify**
@@ -505,7 +513,7 @@ Expected: `no tests ran` (exit code 5) or `collected 0 items` — not an error, 
 - [ ] **Step 1: Write the top-level README**
 
 ```markdown
-# Email Spam Classification — Risk Triage System
+# Email Spam Classification - Risk Triage System
 
 An intern learning project: an email spam classifier built as four progressively deeper versions, each with its own design spec.
 
@@ -520,17 +528,17 @@ An intern learning project: an email spam classifier built as four progressively
 
 ```bash
 poetry install --no-root
-poetry run python -m common.download_data   # once implemented — pulls the Kaggle dataset into data/raw/
+poetry run python -m common.download_data   # once implemented - pulls the Kaggle dataset into data/raw/
 ```
 
 ## Repo layout
 
-- `common/` — code shared across all versions (config, data loading, cleaning, feature extraction)
-- `v1_basic_pipeline/`, `v2_feature_engineering/`, `v3_model_comparison_tuning/`, `v4_streamlit_app/` — one self-contained pipeline per version
-- `app/` — the Streamlit entry point for v4
-- `data/` — gitignored raw/processed/feedback data
-- `docs/superpowers/specs/` — design docs for each version
-- `tests/` — pytest unit tests, organized per version
+- `common/` - code shared across all versions (config, data loading, cleaning, feature extraction)
+- `v1_basic_pipeline/`, `v2_feature_engineering/`, `v3_model_comparison_tuning/`, `v4_streamlit_app/` - one self-contained pipeline per version
+- `app/` - the Streamlit entry point for v4
+- `data/` - gitignored raw/processed/feedback data
+- `docs/superpowers/specs/` - design docs for each version
+- `tests/` - pytest unit tests, organized per version
 ```
 
 - [ ] **Step 2: Verify**
