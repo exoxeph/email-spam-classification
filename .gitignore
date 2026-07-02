@@ -6,7 +6,7 @@ __pycache__/
 # Poetry
 dist/
 
-# Data & artifacts (per specs â€” raw/processed data and trained models are not committed)
+# Data & artifacts (per specs - raw/processed data and trained models are not committed)
 data/raw/*
 !data/raw/.gitkeep
 data/processed/*
