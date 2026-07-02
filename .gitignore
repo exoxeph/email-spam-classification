@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Poetry
+dist/
+
+# Data & artifacts (per specs â€” raw/processed data and trained models are not committed)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/feedback/*
+!data/feedback/.gitkeep
+**/models/*
+!**/models/.gitkeep
+*.pkl
+
+# Kaggle credentials
+kaggle.json
+
+# OS
+.DS_Store
+Thumbs.db
