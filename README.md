@@ -35,24 +35,30 @@ A one-off stress test against a harder, more heterogeneous 82k-email combined co
 
 ## Pipeline shape
 
-```
-  raw email CSV
-        |
-        v
-  common/preprocess.py    (clean_text, map_label, dedup)
-        |
-        v
-  +---------------------------------------------------------------+
-  | v1: word TF-IDF        -> Naive Bayes vs Logistic Regression  |
-  | v2: word+char TF-IDF   -> + 10 metadata features -> LR/SVM    |
-  |      + common/features.py                                     |
-  | v3: same v2 features   -> LR / SVM / RandomForest             |
-  |      -> validation-set threshold sweep -> held-out test score |
-  +---------------------------------------------------------------+
-        |
-        v
-  v4: Streamlit risk-triage UI (loads v3's model, adds explanations,
-      batch CSV scoring, human feedback logging)
+```mermaid
+flowchart TD
+    A["Raw email CSV"] --> B["common/preprocess.py<br/>clean_text, map_label, dedup"]
+    B --> C1
+
+    subgraph Modeling["Modeling versions"]
+        direction TB
+        C1["v1: word TF-IDF<br/>Naive Bayes vs Logistic Regression"]
+        C2["v2: word + char TF-IDF<br/>+ 10 metadata features (common/features.py)<br/>Logistic Regression vs Linear SVM"]
+        C3["v3: same v2 features<br/>LR / SVM / Random Forest<br/>validation threshold sweep -> held-out test score"]
+        C1 -. improves on .-> C2
+        C2 -. improves on .-> C3
+    end
+
+    C3 --> D["v4: Streamlit risk-triage UI<br/>loads v3's model, adds explanations,<br/>batch CSV scoring, feedback logging"]
+
+    classDef v1 fill:#1f2937,stroke:#60a5fa,color:#e5e7eb;
+    classDef v2 fill:#1f2937,stroke:#a78bfa,color:#e5e7eb;
+    classDef v3 fill:#1f2937,stroke:#f2c94c,color:#e5e7eb;
+    classDef v4 fill:#1f2937,stroke:#3ddc97,color:#e5e7eb;
+    class C1 v1
+    class C2 v2
+    class C3 v3
+    class D v4
 ```
 
 ## Setup
