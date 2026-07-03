@@ -35,25 +35,7 @@ A one-off stress test against a harder, more heterogeneous 82k-email combined co
 
 ## Pipeline shape
 
-```
-  raw email CSV
-        |
-        v
-  common/preprocess.py    (clean_text, map_label, dedup)
-        |
-        v
-  +---------------------------------------------------------------+
-  | v1: word TF-IDF        -> Naive Bayes vs Logistic Regression  |
-  | v2: word+char TF-IDF   -> + 10 metadata features -> LR/SVM    |
-  |      + common/features.py                                     |
-  | v3: same v2 features   -> LR / SVM / RandomForest             |
-  |      -> validation-set threshold sweep -> held-out test score |
-  +---------------------------------------------------------------+
-        |
-        v
-  v4: Streamlit risk-triage UI (loads v3's model, adds explanations,
-      batch CSV scoring, human feedback logging)
-```
+![Pipeline diagram: raw email CSV through common/preprocess.py into a modeling-versions cluster (v1 word TF-IDF, v2 word+char TF-IDF plus metadata features, v3 model comparison and threshold tuning), feeding into v4's Streamlit UI, with a side branch to the hard-dataset stress test](assets/pipeline-diagram.png)
 
 ## Setup
 
