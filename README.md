@@ -22,12 +22,12 @@ An intern learning project: an email spam classifier built as four progressively
 
 ## Results at a glance
 
-| Version | Focus | Best model | Test F1 | Test accuracy | Spec |
-|---|---|---|---|---|---|
-| v1 | Basic TF-IDF + Naive Bayes / Logistic Regression | naive_bayes | 0.9813 | 0.9818 | [spec](docs/superpowers/specs/2026-07-01-email-spam-v1-design.md) |
-| v2 | Word+char TF-IDF + 10 engineered metadata features | linear_svm | 0.9894 | 0.9895 | [spec](docs/superpowers/specs/2026-07-02-email-spam-v2-design.md) |
-| v3 | 3-way model comparison, tuned decision threshold, error export | linear_svm @ threshold 0.60 | 0.9891 | 0.9893 | [spec](docs/superpowers/specs/2026-07-02-email-spam-v3-design.md) |
-| v4 | Streamlit risk-triage UI on top of the v3 model | (uses v3's model) | n/a | n/a | [spec](docs/superpowers/specs/2026-07-02-email-spam-v4-design.md) |
+| Version | Focus | Best model | Test F1 | Test accuracy |
+|---|---|---|---|---|
+| v1 | Basic TF-IDF + Naive Bayes / Logistic Regression | naive_bayes | 0.9813 | 0.9818 |
+| v2 | Word+char TF-IDF + 10 engineered metadata features | linear_svm | 0.9894 | 0.9895 |
+| v3 | 3-way model comparison, tuned decision threshold, error export | linear_svm @ threshold 0.60 | 0.9891 | 0.9893 |
+| v4 | Streamlit risk-triage UI on top of the v3 model | (uses v3's model) | n/a | n/a |
 
 All four run on the same base dataset (`bayes2003/emails-for-spam-or-ham-classification-enron-2006`, 28,063 emails, 80/20 or 70/15/15 stratified split, `random_state=42`). v3's number is the more trustworthy one: its model and threshold were chosen on a validation split, then scored once on a held-out test split that was never touched during tuning.
 
@@ -86,5 +86,4 @@ poetry run pytest -v
 - `v4_streamlit_app/` and `app/streamlit_app.py` - the v4 app helpers and Streamlit UI
 - `experiments/` - one-off experiments not part of the versioned pipeline (e.g. the harder-dataset stress test)
 - `data/` - gitignored raw/processed/feedback data
-- `docs/superpowers/specs/` - design docs for each version
 - `tests/` - pytest unit tests, organized per version
