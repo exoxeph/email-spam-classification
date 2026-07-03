@@ -1,14 +1,9 @@
 ```
-     ______________________________________
-    |\                                    /|
-    | \                                  / |
-    |  \________________________________/  |
-    |  |                                |  |
-    |  |   EMAIL SPAM RISK TRIAGE       |  |
-    |  |   ----------------------       |  |
-    |  |   v1 -> v2 -> v3 -> v4         |  |
-    |  |________________________________|  |
-    |______________________________________|
+  ____  ____   _    __  __   _____ ____  ___    _    ____ _____
+ / ___||  _ \ / \  |  \/  | |_   _|  _ \|_ _|  / \  / ___| ____|
+ \___ \| |_) / _ \ | |\/| |   | | | |_) || |  / _ \| |  _|  _|
+  ___) |  __/ ___ \| |  | |   | | |  _ < | | / ___ \ |_| | |___
+ |____/|_| /_/   \_\_|  |_|   |_| |_| \_\___/_/   \_\____|_____|
 ```
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=20&pause=1200&color=3DDC97&center=true&vCenter=true&width=600&lines=Email+Spam+Risk+Triage+System;TF-IDF+%2B+Naive+Bayes+%2F+SVM+%2F+LogReg;v1+baseline+-%3E+v4+triage+UI;98%25%2B+F1+across+every+version)](https://git.io/typing-svg)
