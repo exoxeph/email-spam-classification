@@ -190,10 +190,10 @@ def render_explanation(explanation: list[str]) -> None:
 def render_feedback(email_text: str, prediction: dict) -> None:
     st.markdown("#### Was this prediction correct?")
     yes_col, no_col, _ = st.columns([1, 1, 4])
-    if yes_col.button(":thumbsup: Yes"):
+    if yes_col.button("Yes, correct"):
         log_feedback(email_text, prediction, "yes")
         st.success("Feedback logged.")
-    if no_col.button(":thumbsdown: No"):
+    if no_col.button("No, incorrect"):
         log_feedback(email_text, prediction, "no")
         st.success("Feedback logged.")
 

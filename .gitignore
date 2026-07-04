@@ -25,6 +25,9 @@ kaggle.json
 .DS_Store
 Thumbs.db
 
+# Office temp lock files
+~$*
+
 # Claude Code local worktrees/scratch (not part of the project)
 .claude/
 

@@ -44,6 +44,10 @@ A one-off stress test against a harder, more heterogeneous 82k-email combined co
 
 ![Pipeline diagram: raw email CSV through common/preprocess.py into a modeling-versions cluster (v1 word TF-IDF, v2 word+char TF-IDF plus metadata features, v3 model comparison and threshold tuning), feeding into v4's Streamlit UI, with a side branch to the hard-dataset stress test](assets/pipeline-diagram.png)
 
+## v4: risk-triage UI
+
+![Email Spam Risk Triage UI showing a QUARANTINE verdict for a spam example, with a spam-probability gauge, prediction/risk metrics, and explanation bullets listing the link, suspicious words, and exclamation marks that triggered the verdict](assets/v4-ui-screenshot.png)
+
 ## Setup
 
 ```bash
